@@ -4,36 +4,42 @@ import {
   filterIrrelevantBranchLabels
 } from '../../src/utils'
 
-import {Inputs} from '../../src/github-helper'
+import { Inputs } from '../../src/github-helper'
 
 describe('parseBranchFromLabel', () => {
   it('should parse version from label', () => {
     let test = 'CP v1.0.0'
-    expect(parseBranchFromLabel('v', test)).toBe('v1.0.0')
+    let inputs = {
+      userBranchPrefix: 'v',
+      labelPatternRequirement: 'CP v'
+    } as Inputs
+
+    expect(parseBranchFromLabel(inputs, test)).toBe('v1.0.0')
     test = 'CP v1.0.1'
-    expect(parseBranchFromLabel('v', test)).toBe('v1.0.1')
+    expect(parseBranchFromLabel(inputs, test)).toBe('v1.0.1')
     test = 'CP v1.0'
-    expect(parseBranchFromLabel('v', test)).toBe('v1.0')
+    expect(parseBranchFromLabel(inputs, test)).toBe('v1.0')
     test = 'CP v1.10.1'
-    expect(parseBranchFromLabel('v', test)).toBe('v1.10.1')
+    expect(parseBranchFromLabel(inputs, test)).toBe('v1.10.1')
     test = 'CP v10.10.1'
-    expect(parseBranchFromLabel('v', test)).toBe('v10.10.1')
+    expect(parseBranchFromLabel(inputs, test)).toBe('v10.10.1')
     test = 'CP v5.14.2'
-    expect(parseBranchFromLabel('v', test)).toBe('v5.14.2')
+    expect(parseBranchFromLabel(inputs, test)).toBe('v5.14.2')
     test = 'CP v5'
-    expect(parseBranchFromLabel('v', test)).toBe('v5')
+    expect(parseBranchFromLabel(inputs, test)).toBe('v5')
+
     test = 'CP 5'
-    expect(parseBranchFromLabel('', test)).toBe('5')
+    inputs.userBranchPrefix = ''
+    inputs.labelPatternRequirement = 'CP '
+    expect(parseBranchFromLabel(inputs, test)).toBe('5')
     test = 'Cherry pick 0.1.1'
-    expect(parseBranchFromLabel('', test)).toBe('0.1.1')
+    inputs.labelPatternRequirement = 'Cherry pick '
+    expect(parseBranchFromLabel(inputs, test)).toBe('0.1.1')
+
     test = 'Cherry pick 0.1.1'
-    expect(parseBranchFromLabel('release-v', test)).toBe('release-v0.1.1')
-  })
-  it('should throw error', () => {
-    const test = 'CP 1209.'
-    expect(() => {
-      parseBranchFromLabel('', test)
-    }).toThrowError()
+    inputs.userBranchPrefix = 'release-v'
+    inputs.labelPatternRequirement = 'Cherry pick '
+    expect(parseBranchFromLabel(inputs, test)).toBe('release-v0.1.1')
   })
 })
 

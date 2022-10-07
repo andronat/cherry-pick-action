@@ -139,7 +139,7 @@ export function buildBranchesFromLabels(inputs: Inputs): string[] {
     github.context.payload.pull_request.labels
   core.info(`potential branches ${JSON.stringify(potentialBranches)}`)
   const matchedLabels = potentialBranches.map(
-    (branchToCheck: {name: string}) => {
+    (branchToCheck: { name: string }) => {
       return utils.validatelabelPatternRequirement(
         inputs.labelPatternRequirement,
         branchToCheck.name
@@ -149,6 +149,6 @@ export function buildBranchesFromLabels(inputs: Inputs): string[] {
   const filteredLabels: any = _.compact(matchedLabels)
   core.info(`branch labels ${JSON.stringify(filteredLabels)}`)
   return filteredLabels.map((matchedLabel: string) => {
-    return utils.parseBranchFromLabel(inputs.userBranchPrefix, matchedLabel)
+    return utils.parseBranchFromLabel(inputs, matchedLabel)
   })
 }
